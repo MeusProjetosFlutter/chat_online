@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'textcomposer.dart';
+import 'package:image_picker/image_picker.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,18 +13,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  void _sendMessage({String? text, File? image}) async {
+  Future<void> _sendMessage({XFile? image, String? text}) async {
     Map<String, dynamic> message = {};
+
+    final selectedImage = File(image!.path);
 
     if (text != null) {
       message['text'] = text;
-    }
-    if (image != null) {
+    } else {
       final storageRef = FirebaseStorage.instance.ref();
       final uploadTask = storageRef
           .child('images')
           .child(DateTime.now().millisecondsSinceEpoch.toString())
-          .putFile(image);
+          .putFile(selectedImage);
       final snapshot = await uploadTask.whenComplete(() {});
       String imageUrl = await snapshot.ref.getDownloadURL();
       message['image'] = imageUrl;
@@ -39,7 +41,11 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Chat Online'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Chat Online', style: TextStyle(color: Colors.white)),
+        centerTitle: true,
+        backgroundColor: Colors.deepPurple,
+      ),
       body: Column(
         children: [
           Expanded(
@@ -58,18 +64,16 @@ class _HomePageState extends State<HomePage> {
                       itemCount: documents.length,
                       reverse: true, //inverter ordem das mensagens
                       itemBuilder: (context, index) {
-                        final data = documents[index].data() as Map<String, dynamic>?;
-                        return ListTile(
-                          title: Text(data?['text'] ?? ''),
-                        );
+                        final data =
+                            documents[index].data() as Map<String, dynamic>?;
+                        return ListTile(title: Text(data?['text'] ?? ''));
                       },
                     );
                 }
               },
             ),
-            
           ),
-          TextComposer(_sendMessage),
+          SafeArea(child: TextComposer(_sendMessage)),
         ],
       ),
     );
