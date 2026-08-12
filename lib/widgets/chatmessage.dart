@@ -4,11 +4,7 @@ class ChatMessage extends StatelessWidget {
   final String text;
   final bool isMine;
 
-  const ChatMessage({
-    Key? key,
-    required this.text,
-    this.isMine = false,
-  }) : super(key: key);
+  const ChatMessage({super.key, required this.text, this.isMine = false});
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +19,7 @@ class ChatMessage extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: TextStyle(
-            color: isMine ? Colors.white : Colors.black87,
-          ),
+          style: TextStyle(color: isMine ? Colors.white : Colors.black87),
         ),
       ),
     );
