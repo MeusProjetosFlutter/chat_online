@@ -21,7 +21,7 @@ class _TextComposerState extends State<TextComposer> {
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.camera_alt),
+            icon: const Icon(Icons.camera_alt, color: Colors.deepPurple),
             onPressed: () async {
               final picker = ImagePicker();
               XFile? image = await picker.pickImage(source: ImageSource.camera);
@@ -46,7 +46,10 @@ class _TextComposerState extends State<TextComposer> {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.send),
+            icon: Icon(
+              Icons.send,
+              color: isComposing ? Colors.deepPurple : Colors.grey,
+            ),
             onPressed: isComposing
                 ? () {
                     widget.sendMessage(text: _controller.text);
